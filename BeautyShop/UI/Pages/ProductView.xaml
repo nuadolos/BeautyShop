@@ -65,7 +65,14 @@
                                                 <Image Source="{Binding Text, ElementName=ImagePath}" Height="250" Width="250" Stretch="Fill"/>
                                             </Border>
 
-                                            <TextBlock Text="{Binding Title}" Style="{StaticResource ListViewTBlock}"/>
+                                            <TextBlock Style="{StaticResource ListViewTBlock}">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="{}{0}{1}">
+                                                        <Binding Path="Title"/>
+                                                        <Binding Path="AttachedTitle"/>
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
                                             <TextBlock Text="{Binding Cost, StringFormat={}{0:0.00} руб.}" Style="{StaticResource ListViewTBlock}"/>
                                             <TextBlock Text="{Binding ActiveProd}" Foreground="LightSlateGray" FontSize="12" Margin="5"/>
                                         </StackPanel>
@@ -100,5 +107,8 @@
 
         <Button Grid.Row="2" Content="История продаж" HorizontalAlignment="Right"
                 Name="SalesHistoryBtn" Click="SalesHistoryBtn_Click"/>
+        
+        <Button Grid.Row="2" Content="Выбрать" Visibility="Collapsed" HorizontalAlignment="Center"
+                Name="ChoiceProductBtn" Click="ChoiceProductBtn_Click"/>
     </Grid>
 </Page>

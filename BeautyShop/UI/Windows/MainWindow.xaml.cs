@@ -28,7 +28,7 @@ namespace BeautyShop
         {
             InitializeComponent();
 
-            MainFrame.Navigate(new ProductView());
+            MainFrame.Navigate(new ProductView(false));
             Transition.MainFrame = MainFrame;
         }
 

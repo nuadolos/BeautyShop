@@ -29,12 +29,23 @@ namespace BeautyShop.Entities
         public bool IsActive { get; set; }
         public string ActiveProd
         {
+            get => IsActive ? "активен" : "неактивен";
+        }
+        public string AttachedTitle
+        {
             get
             {
-                if (IsActive)
-                    return "активен";
+                string allTitles = null;
+
+                foreach (var item in AttachedProduct)
+                {
+                    allTitles += item.Product1.Title + ", ";
+                }
+
+                if (allTitles != null)
+                    return allTitles.Remove(allTitles.Length - 2, 2).Insert(0, "(").Insert(allTitles.Length - 1, ")");
                 else
-                    return "неактивен";
+                    return "";
             }
         }
         public string Description { get; set; }

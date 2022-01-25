@@ -305,6 +305,8 @@
       <DependentUpon>BeautyModel.edmx</DependentUpon>
       <LastGenOutput>BeautyModel.cs</LastGenOutput>
     </Content>
+    <Resource Include="UI\SystemIcon\AddData.png" />
+    <Resource Include="UI\SystemIcon\DeleteData.png" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

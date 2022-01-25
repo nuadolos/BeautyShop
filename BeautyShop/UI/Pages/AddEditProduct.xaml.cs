@@ -27,6 +27,24 @@ namespace BeautyShop.UI.Pages
         #region Состояние и свойства страницы AddEditProduct
 
         private Product addProduct;
+        private AttachedProduct addImageProd;
+        private string iconPlus;
+
+        private List<AttachedProduct> AttProdLV
+        {
+            get
+            {
+                var addAttachedProd = Transition.Context.AttachedProduct
+                    .Where(p => p.Product.ID == addProduct.ID)
+                    .ToList();
+                addAttachedProd.Insert(addAttachedProd.Count, addImageProd);
+
+                return addAttachedProd;
+            }
+        }
+
+        public static int idBasicProduct;
+        public static List<AttachedProduct> addedAttachedProd;
         public string Path { get { return System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "../../UI")); } }
 
         #endregion
@@ -41,15 +59,22 @@ namespace BeautyShop.UI.Pages
             HeaderBlock.Text = tempProd != null ? "Редактирование продукта" : "Добавление продукта";
 
             if (tempProd != null)
+            {
                 ImageProduct.Source = (ImageSource)new ImageSourceConverter().ConvertFromString($@"{Path}\{tempProd.MainImagePath}");
+
+                idBasicProduct = tempProd.ID;
+                iconPlus = @"SystemIcon\AddData.png";
+                addImageProd = new AttachedProduct { Product1 = new Product { MainImagePath = iconPlus } };
+
+                DeleteAttProdBtn.Visibility = Visibility.Visible;
+                AttachedProdLV.Visibility = Visibility.Visible;
+                AttachedProdLV.ItemsSource = AttProdLV;
+            }
 
             var allManufacturer = Transition.Context.Manufacturer.ToList();
             ManufacturerCBox.ItemsSource = allManufacturer;
 
-            //DataContext = addProduct;
-
-            AttachedProdLV.ItemsSource = Transition.Context.AttachedProduct.ToList();
-            AttachedProdLV.DataContext = Transition.Context.AttachedProduct.ToList();
+            DataContext = addProduct;
         }
 
         #endregion
@@ -110,6 +135,67 @@ namespace BeautyShop.UI.Pages
 
                 addProduct.MainImagePath = $@"Товары салона красоты\{downloadImage.SafeFileName}";
                 ImageProduct.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(downloadImage.FileName);
+            }
+        }
+
+        #endregion
+
+        #region Переход на новый AddEditProduct для подробной информации о прикрепленном продукте
+
+        private void AttachedProdLV_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            var tempItem = AttachedProdLV.SelectedItem as AttachedProduct;
+
+            if (tempItem.Product1.MainImagePath == iconPlus)
+                Transition.MainFrame.Navigate(new ProductView(true));
+            else if (tempItem != null)
+                Transition.MainFrame.Navigate(new AddEditProduct(tempItem.Product1));
+        }
+
+        #endregion
+
+        #region Обновление данных в AttachedProdLV после добавления прикрепленных продуктов
+
+        private void Page_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (Visibility == Visibility.Visible && addedAttachedProd != null)
+            {
+                Transition.Context.ChangeTracker.Entries().ToList().ForEach(p => p.Reload());
+                AttachedProdLV.ItemsSource = AttProdLV;
+            }
+        }
+
+        #endregion
+
+        #region Удаление данных из AttachedProdLV
+
+        private void DeleteAttProdBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var itemsAttachedProd = AttachedProdLV.SelectedItems.Cast<AttachedProduct>().ToList();
+
+            foreach(var item in itemsAttachedProd)
+            {
+                if (item.Product1.MainImagePath == iconPlus)
+                {
+                    MessageBox.Show($"Невозможно удалить элемент, позволяющий прикреплять дополнительные продукты", "Удаление данных", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+            }
+
+            if (MessageBox.Show($"Вы хотите удалить {itemsAttachedProd.Count} элементов?",
+                "Удаление данных", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
+            {
+                try
+                {
+                    Transition.Context.AttachedProduct.RemoveRange(itemsAttachedProd);
+                    Transition.Context.SaveChanges();
+                    MessageBox.Show("Данные успешно удалены", "Удаление данных", MessageBoxButton.OK, MessageBoxImage.Information);
+                    AttachedProdLV.ItemsSource = AttProdLV;
+                }
+                catch (Exception er)
+                {
+                    MessageBox.Show($"При удалении данных произошла ошибка:\n{er.Message}", "Удаление данных", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
             }
         }
 

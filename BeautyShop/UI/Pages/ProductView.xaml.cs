@@ -23,16 +23,25 @@ namespace BeautyShop.UI.Pages
     public partial class ProductView : Page
     {
         #region Состояние и свойства страницы ProductView
-
+        bool isMovingFrom;
         private List<Product> ProdList { get => Transition.Context.Product.ToList(); }
 
         #endregion
 
         #region Конструктор страницы ProductView
 
-        public ProductView()
+        public ProductView(bool IsMovingFrom)
         {
             InitializeComponent();
+
+            if (IsMovingFrom)
+            {
+                isMovingFrom = IsMovingFrom;
+
+                BtnAdd.Visibility = Visibility.Hidden;
+                SalesHistoryBtn.Visibility = Visibility.Hidden;
+                ChoiceProductBtn.Visibility = Visibility.Visible;
+            }
 
             var cmbManufacturer = Transition.Context.Manufacturer.ToList();
             cmbManufacturer.Insert(0, new Manufacturer { Name = "Все производители" });
@@ -128,17 +137,20 @@ namespace BeautyShop.UI.Pages
 
         private void ViewProduct_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var tempCountItems = ViewProduct.SelectedItems.Count;
-
-            if (tempCountItems != 0)
+            if (!isMovingFrom)
             {
-                if (tempCountItems == 1)
-                    Transition.MainFrame.Navigate(new AddEditProduct(ViewProduct.SelectedItem as Product));
+                var tempCountItems = ViewProduct.SelectedItems.Count;
+
+                if (tempCountItems != 0)
+                {
+                    if (tempCountItems == 1)
+                        Transition.MainFrame.Navigate(new AddEditProduct(ViewProduct.SelectedItem as Product));
+                    else
+                        MessageBox.Show("Необходимо выбрать конкретный продукт", "Редактирование продукта", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
                 else
-                    MessageBox.Show("Необходимо выбрать конкретный продукт", "Редактирование продукта", MessageBoxButton.OK, MessageBoxImage.Error);
+                    MessageBox.Show("Выберите продукт для редактирования", "Редактирование продукта", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-            else
-                MessageBox.Show("Выберите продукт для редактирования", "Редактирование продукта", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
@@ -185,10 +197,13 @@ namespace BeautyShop.UI.Pages
 
         private void ViewProduct_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ViewProduct.SelectedItems.Count > 0)
-                DeleteBtn.Visibility = Visibility.Visible;
-            else
-                DeleteBtn.Visibility = Visibility.Hidden;
+            if (!isMovingFrom)
+            {
+                if (ViewProduct.SelectedItems.Count > 0)
+                    DeleteBtn.Visibility = Visibility.Visible;
+                else
+                    DeleteBtn.Visibility = Visibility.Hidden;
+            }
         }
 
 
@@ -212,6 +227,66 @@ namespace BeautyShop.UI.Pages
         private void SalesHistoryBtn_Click(object sender, RoutedEventArgs e)
         {
             Transition.MainFrame.Navigate(new SalesHistory());
+        }
+
+        #endregion
+
+        #region Выбор продуктов для прикрепленния их к основному
+
+        private void ChoiceProductBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var tempAttachedProdList = ViewProduct.SelectedItems.Cast<Product>().ToList();
+
+            if (tempAttachedProdList.Count > 0)
+            {
+                foreach(Product prod in tempAttachedProdList)
+                {
+                    StringBuilder error = new StringBuilder();
+
+                    if (prod.IsActive == false)
+                        error.AppendLine("Один из выбранных продуктов является неактивным");
+                    if (prod.ID == AddEditProduct.idBasicProduct)
+                        error.AppendLine("Невозможно добавить продукт в качестве дополнительного к самому себе");
+                    foreach(AttachedProduct attProd in Transition.Context.AttachedProduct.ToList())
+                    {
+                        if (prod.ID == attProd.AttachedProductID)
+                            error.AppendLine("Один из выбранных продуктов уже добавлен к продукту в качестве добавленного");
+                    }
+
+                    if (error.Length > 0)
+                    {
+                        MessageBox.Show($"Данные не соотвествуют следующим критериям:\n{error}", 
+                            "Прикрепление доп. продуктов", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                }
+
+                AddEditProduct.addedAttachedProd = new List<AttachedProduct>();
+
+                for (int i = 0; i < tempAttachedProdList.Count; i++)
+                {
+                    AddEditProduct.addedAttachedProd.Add(new AttachedProduct
+                    {
+                        MainProductID = AddEditProduct.idBasicProduct,
+                        AttachedProductID = tempAttachedProdList[i].ID
+                    });
+                }
+
+                Transition.Context.AttachedProduct.AddRange(AddEditProduct.addedAttachedProd);
+
+                try
+                {
+                    Transition.Context.SaveChanges();
+                    Transition.MainFrame.GoBack();
+                }
+                catch (Exception er)
+                {
+                    MessageBox.Show($"При сохранении прикрепленных продуктов произошла ошибка:\n{er.Message}",
+                        "Прикрепление доп. продуктов", MessageBoxButton.OK, MessageBoxImage.Error);
+                }
+            }
+            else
+                MessageBox.Show("Выберите хотя бы один продукт", "Прикрепление доп. продуктов", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         #endregion

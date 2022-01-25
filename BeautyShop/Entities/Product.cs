@@ -27,9 +27,19 @@ namespace BeautyShop.Entities
         public string Title { get; set; }
         public decimal Cost { get; set; }
         public bool IsActive { get; set; }
+        public string ActiveProd
+        {
+            get
+            {
+                if (IsActive)
+                    return "активен";
+                else
+                    return "неактивен";
+            }
+        }
         public string Description { get; set; }
         public string MainImagePath { get; set; }
-        public Nullable<int> ManufacturerID { get; set; }
+        public int ManufacturerID { get; set; }
     
         public virtual Manufacturer Manufacturer { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]

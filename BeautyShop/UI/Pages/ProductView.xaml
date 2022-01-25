@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:BeautyShop.UI.Pages"
       mc:Ignorable="d" 
       d:DesignHeight="650" d:DesignWidth="1200"
-      Title="ProductView">
+      Title="ProductView" IsVisibleChanged="Page_IsVisibleChanged">
 
     <Grid>
         <Grid.RowDefinitions>
@@ -20,19 +20,20 @@
                  LostFocus="SearchBox_LostFocus" GotFocus="SearchBox_GotFocus"/>
         <WrapPanel HorizontalAlignment="Center">
             <ComboBox Margin="10" 
-                      Name="TypeSort" SelectionChanged="TypeSort_SelectionChanged">
+                      Name="SortCBox" SelectionChanged="SortCBox_SelectionChanged">
                 <ComboBoxItem Content="Нет"/>
                 <ComboBoxItem Content="Стоимость"/>
             </ComboBox>
             <CheckBox Content="По убыванию" FontSize="16" Margin="10" VerticalAlignment="Center"
                       Name="OrderCheck" Checked="OrderCheck_Checked" Unchecked="OrderCheck_Unchecked"/>
         </WrapPanel>
-        <ComboBox HorizontalAlignment="Right" DisplayMemberPath="Name" SelectedValuePath="Id"
-                  Name="SourceBox" SelectionChanged="SourceBox_SelectionChanged"/>
+        <ComboBox HorizontalAlignment="Right" DisplayMemberPath="Name" SelectedValuePath="ID"
+                  Name="ManufacturerCBox" SelectionChanged="ManufacturerCBox_SelectionChanged"
+                  MaxDropDownHeight="200"/>
 
         <TextBlock Grid.Row="1" Text="Таких записей не существует!" FontSize="36"
                    HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-        <ListView Grid.Row="1"
+        <ListView Grid.Row="1" SelectionChanged="ViewProduct_SelectionChanged"
                   Name="ViewProduct" MouseDoubleClick="ViewProduct_MouseDoubleClick"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
             <ListView.ItemsPanel>
@@ -45,32 +46,33 @@
                     <Setter Property="Template">
                         <Setter.Value>
                             <ControlTemplate TargetType="ListViewItem">
-                                <Border BorderBrush="#FFFFA981" BorderThickness="3" CornerRadius="4" Margin="10" 
+                                <Border BorderBrush="{StaticResource AttentionBackground}" BorderThickness="3" CornerRadius="4" Margin="10" 
                                         x:Name="BorderLV">
                                     <StackPanel Width="300">
-                                        <Border BorderBrush="#FFFF9766" BorderThickness="3"
+                                        <TextBlock Text="{Binding MainImagePath, StringFormat=../{0}}"
+                                                   Visibility="Collapsed" x:Name="ImagePath"/>
+                                        <Border BorderBrush="{StaticResource AttentionBackground}" BorderThickness="3"
                                             Background="Transparent" Margin="5"
                                             HorizontalAlignment="Center">
-                                            <Image Source="{Binding Image}" Height="250" Width="250" Stretch="Fill"/>
+                                            <Image Source="{Binding Text, ElementName=ImagePath}" Height="250" Width="250" Stretch="Fill"/>
                                         </Border>
 
-                                        <TextBlock Text="{Binding Name, StringFormat=Название: {0}}" Style="{StaticResource ListViewTBlock}"></TextBlock>
-                                        <TextBlock Text="{Binding CreateDate, StringFormat=Создание записи: {0:d}}" Style="{StaticResource ListViewTBlock}"></TextBlock>
-                                        <TextBlock Text="{Binding SourceLore.Name, StringFormat=Источник: {0}}" Style="{StaticResource ListViewTBlock}"></TextBlock>
-
-                                        <WrapPanel HorizontalAlignment="Center">
-                                            <TextBlock Text="Статус:" Style="{StaticResource ListViewTBlock}"/>
-                                            <TextBlock Text="{Binding StudiedText}" Style="{StaticResource ListViewTBlock}"/>
-                                        </WrapPanel>
+                                        <TextBlock Text="{Binding Title}" Style="{StaticResource ListViewTBlock}"/>
+                                        <TextBlock Text="{Binding Cost, StringFormat={}{0:0.00} руб.}" Style="{StaticResource ListViewTBlock}"/>
+                                        <TextBlock Text="{Binding ActiveProd}" Foreground="LightSlateGray" FontSize="12" Margin="5"/>
                                     </StackPanel>
                                 </Border>
 
                                 <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveProd}" Value="неактивен">
+                                        <Setter TargetName="BorderLV" Property="Background" Value="LightGray"></Setter>
+                                        <Setter TargetName="BorderLV" Property="Opacity" Value="0.8"></Setter>
+                                    </DataTrigger>
                                     <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="BorderLV" Property="Background" Value="#FFFFB66C"></Setter>
+                                        <Setter TargetName="BorderLV" Property="Background" Value="#FFFFA1B3"></Setter>
                                     </Trigger>
                                     <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="BorderLV" Property="Background" Value="#FFFFD4A8"></Setter>
+                                        <Setter TargetName="BorderLV" Property="Background" Value="#FFFFBECB"></Setter>
                                     </Trigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>

@@ -5,10 +5,59 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:BeautyShop.UI.Pages"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="600" d:DesignWidth="1200"
       Title="AddEditProduct">
 
     <Grid>
-        
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="50"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock FontSize="30"
+                   x:Name="HeaderBlock"/>
+
+        <WrapPanel Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <StackPanel>
+                <WrapPanel>
+                    <TextBlock Text="Наименование:" Width="150" TextAlignment="Right"/>
+                    <TextBox Text="{Binding Title}"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Text="Цена:" Width="150" TextAlignment="Right"/>
+                    <TextBox Text="{Binding Cost, StringFormat={}{0:0.00}}"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Text="Производитель:" Width="150" TextAlignment="Right"/>
+                    <ComboBox SelectedItem="{Binding Manufacturer}" DisplayMemberPath="Name" SelectedValuePath="ID"
+                              x:Name="ManufacturerCBox"/>
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Text="Описание:" Width="150" Margin="0, 10"
+                               VerticalAlignment="Top" TextAlignment="Right"/>
+                    <TextBox Text="{Binding Description}" Height="80"
+                             TextWrapping="Wrap"/>
+                </WrapPanel>
+            </StackPanel>
+            <StackPanel>
+                <Image Source="/UI/Logo/beauty_logo.png" Margin="10"
+                       Width="175" Height="175" Stretch="Fill"
+                       x:Name="ImageProduct"/>
+                <WrapPanel>
+                    <RadioButton Content="Активен" IsChecked="{Binding IsActive}"
+                                 Margin="10"/>
+                    <RadioButton Content="Не активен" IsChecked="True"
+                                 Margin="10"/>
+                </WrapPanel>
+            </StackPanel>
+        </WrapPanel>
+
+        <WrapPanel Grid.Row="2" HorizontalAlignment="Center">
+            <Button Content="Сохранить"
+                    x:Name="SaveBtn" Click="SaveBtn_Click"/>
+            <Button Content="Загрузить фото"
+                    x:Name="DownloadImageBtn" Click="DownloadImageBtn_Click"/>
+        </WrapPanel>
     </Grid>
 </Page>

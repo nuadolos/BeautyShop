@@ -24,63 +24,72 @@
                 <ComboBoxItem Content="Нет"/>
                 <ComboBoxItem Content="Стоимость"/>
             </ComboBox>
-            <CheckBox Content="По убыванию" FontSize="16" Margin="10" VerticalAlignment="Center"
+            <CheckBox Content="По убыванию" FontSize="16" Margin="10" VerticalAlignment="Center" Padding="2, -4"
                       Name="OrderCheck" Checked="OrderCheck_Checked" Unchecked="OrderCheck_Unchecked"/>
         </WrapPanel>
         <ComboBox HorizontalAlignment="Right" DisplayMemberPath="Name" SelectedValuePath="ID"
                   Name="ManufacturerCBox" SelectionChanged="ManufacturerCBox_SelectionChanged"
                   MaxDropDownHeight="200"/>
 
-        <TextBlock Grid.Row="1" Text="Таких записей не существует!" FontSize="36"
-                   HorizontalAlignment="Center" VerticalAlignment="Center"></TextBlock>
-        <ListView Grid.Row="1" SelectionChanged="ViewProduct_SelectionChanged"
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock Text="Количество:" HorizontalAlignment="Left" Margin="5"
+                       x:Name="CountProduct"/>
+
+            <TextBlock Grid.Row="1" Text="Таких записей не существует!" FontSize="36"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            <ListView Grid.Row="1" SelectionChanged="ViewProduct_SelectionChanged"
                   Name="ViewProduct" MouseDoubleClick="ViewProduct_MouseDoubleClick"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <WrapPanel HorizontalAlignment="Center"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemContainerStyle>
-                <Style TargetType="ListViewItem">
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="ListViewItem">
-                                <Border BorderBrush="{StaticResource AttentionBackground}" BorderThickness="3" CornerRadius="4" Margin="10" 
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel HorizontalAlignment="Center"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="ListViewItem">
+                                    <Border BorderBrush="{StaticResource AttentionBackground}" BorderThickness="3" CornerRadius="4" Margin="10" 
                                         x:Name="BorderLV">
-                                    <StackPanel Width="300">
-                                        <TextBlock Text="{Binding MainImagePath, StringFormat=../{0}}"
+                                        <StackPanel Width="300">
+                                            <TextBlock Text="{Binding MainImagePath, StringFormat=../{0}}"
                                                    Visibility="Collapsed" x:Name="ImagePath"/>
-                                        <Border BorderBrush="{StaticResource AttentionBackground}" BorderThickness="3"
+                                            <Border BorderBrush="{StaticResource AttentionBackground}" BorderThickness="3"
                                             Background="Transparent" Margin="5"
                                             HorizontalAlignment="Center">
-                                            <Image Source="{Binding Text, ElementName=ImagePath}" Height="250" Width="250" Stretch="Fill"/>
-                                        </Border>
+                                                <Image Source="{Binding Text, ElementName=ImagePath}" Height="250" Width="250" Stretch="Fill"/>
+                                            </Border>
 
-                                        <TextBlock Text="{Binding Title}" Style="{StaticResource ListViewTBlock}"/>
-                                        <TextBlock Text="{Binding Cost, StringFormat={}{0:0.00} руб.}" Style="{StaticResource ListViewTBlock}"/>
-                                        <TextBlock Text="{Binding ActiveProd}" Foreground="LightSlateGray" FontSize="12" Margin="5"/>
-                                    </StackPanel>
-                                </Border>
+                                            <TextBlock Text="{Binding Title}" Style="{StaticResource ListViewTBlock}"/>
+                                            <TextBlock Text="{Binding Cost, StringFormat={}{0:0.00} руб.}" Style="{StaticResource ListViewTBlock}"/>
+                                            <TextBlock Text="{Binding ActiveProd}" Foreground="LightSlateGray" FontSize="12" Margin="5"/>
+                                        </StackPanel>
+                                    </Border>
 
-                                <ControlTemplate.Triggers>
-                                    <DataTrigger Binding="{Binding ActiveProd}" Value="неактивен">
-                                        <Setter TargetName="BorderLV" Property="Background" Value="LightGray"></Setter>
-                                        <Setter TargetName="BorderLV" Property="Opacity" Value="0.8"></Setter>
-                                    </DataTrigger>
-                                    <Trigger Property="IsSelected" Value="True">
-                                        <Setter TargetName="BorderLV" Property="Background" Value="#FFFFA1B3"></Setter>
-                                    </Trigger>
-                                    <Trigger Property="IsMouseOver" Value="True">
-                                        <Setter TargetName="BorderLV" Property="Background" Value="#FFFFBECB"></Setter>
-                                    </Trigger>
-                                </ControlTemplate.Triggers>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
-                </Style>
-            </ListView.ItemContainerStyle>
-        </ListView>
+                                    <ControlTemplate.Triggers>
+                                        <DataTrigger Binding="{Binding ActiveProd}" Value="неактивен">
+                                            <Setter TargetName="BorderLV" Property="Background" Value="LightGray"></Setter>
+                                            <Setter TargetName="BorderLV" Property="Opacity" Value="0.8"></Setter>
+                                        </DataTrigger>
+                                        <Trigger Property="IsSelected" Value="True">
+                                            <Setter TargetName="BorderLV" Property="Background" Value="#FFFFA1B3"></Setter>
+                                        </Trigger>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="BorderLV" Property="Background" Value="#FFFFBECB"></Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
 
         <WrapPanel Grid.Row="2">
             <Button Content="Добавить"
@@ -88,5 +97,8 @@
             <Button Content="Удалить" Visibility="Hidden"
                 Name="DeleteBtn" Click="DeleteBtn_Click"/>
         </WrapPanel>
+
+        <Button Grid.Row="2" Content="История продаж" HorizontalAlignment="Right"
+                Name="SalesHistoryBtn" Click="SalesHistoryBtn_Click"/>
     </Grid>
 </Page>

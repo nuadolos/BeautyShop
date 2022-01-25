@@ -1,0 +1,30 @@
+﻿<Page x:Class="BeautyShop.UI.Pages.SalesHistory"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:BeautyShop.UI.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="600" d:DesignWidth="1200"
+      Title="SalesHistory">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="80"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <ComboBox Width="400" DisplayMemberPath="Title"
+                  x:Name="ProductCBox" SelectionChanged="ProductCBox_SelectionChanged"/>
+        
+        <DataGrid Grid.Row="1" IsReadOnly="True" CanUserSortColumns="False"
+                  AutoGenerateColumns="False" Margin="10"
+                  x:Name="SalesDG">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Продукт" Binding="{Binding Product.Title}" Width="*"/>
+                <DataGridTextColumn Header="Количество продаж" Binding="{Binding Quantity}" Width="*"/>
+                <DataGridTextColumn Header="Дата продажи" Binding="{Binding SaleDate}" Width="*"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>

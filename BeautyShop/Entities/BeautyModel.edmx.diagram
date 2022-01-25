@@ -5,17 +5,21 @@
     <!-- Diagram content (shape and connector positions) -->
     <edmx:Diagrams>
       <Diagram DiagramId="4fbd1b30c197498c94fc5cadbb5b6bf4" Name="Diagram1">
-        <EntityTypeShape EntityType="BeautyModel.Client" Width="1.5" PointX="0.75" PointY="7" />
-        <EntityTypeShape EntityType="BeautyModel.ClientService" Width="1.5" PointX="3" PointY="9.125" />
-        <EntityTypeShape EntityType="BeautyModel.DocumentByService" Width="1.5" PointX="5.25" PointY="9.625" />
-        <EntityTypeShape EntityType="BeautyModel.Gender" Width="1.5" PointX="1.5" PointY="13" />
-        <EntityTypeShape EntityType="BeautyModel.Manufacturer" Width="1.5" PointX="0.75" PointY="2.625" />
-        <EntityTypeShape EntityType="BeautyModel.Product" Width="1.5" PointX="3" PointY="1.875" />
-        <EntityTypeShape EntityType="BeautyModel.ProductPhoto" Width="1.5" PointX="5.25" PointY="5.75" />
-        <EntityTypeShape EntityType="BeautyModel.ProductSale" Width="1.5" PointX="5.25" PointY="2.375" />
-        <EntityTypeShape EntityType="BeautyModel.Service" Width="1.5" PointX="0.75" PointY="16.25" />
-        <EntityTypeShape EntityType="BeautyModel.ServicePhoto" Width="1.5" PointX="3" PointY="18.75" />
-        <EntityTypeShape EntityType="BeautyModel.Tag" Width="1.5" PointX="3" PointY="15.875" />
+        <EntityTypeShape EntityType="BeautyModel.AttachedProduct" Width="1.5" PointX="5.25" PointY="6.625" />
+        <EntityTypeShape EntityType="BeautyModel.Client" Width="1.5" PointX="0.75" PointY="11.75" />
+        <EntityTypeShape EntityType="BeautyModel.ClientService" Width="1.5" PointX="3" PointY="10.375" />
+        <EntityTypeShape EntityType="BeautyModel.DocumentByService" Width="1.5" PointX="5.25" PointY="12.875" />
+        <EntityTypeShape EntityType="BeautyModel.Gender" Width="1.5" PointX="1.5" PointY="16.75" />
+        <EntityTypeShape EntityType="BeautyModel.Manufacturer" Width="1.5" PointX="0.75" PointY="4.875" />
+        <EntityTypeShape EntityType="BeautyModel.Product" Width="1.5" PointX="3" PointY="4.125" />
+        <EntityTypeShape EntityType="BeautyModel.ProductPhoto" Width="1.5" PointX="5.25" PointY="9.375" />
+        <EntityTypeShape EntityType="BeautyModel.ProductSale" Width="1.5" PointX="5.25" PointY="2.625" />
+        <EntityTypeShape EntityType="BeautyModel.Service" Width="1.5" PointX="0.75" PointY="8.25" />
+        <EntityTypeShape EntityType="BeautyModel.ServicePhoto" Width="1.5" PointX="3" PointY="0.75" />
+        <EntityTypeShape EntityType="BeautyModel.sysdiagrams" Width="1.5" PointX="7.75" PointY="1.5" />
+        <EntityTypeShape EntityType="BeautyModel.Tag" Width="1.5" PointX="3" PointY="19.625" />
+        <AssociationConnector Association="BeautyModel.FK_AttachedProduct_Product" />
+        <AssociationConnector Association="BeautyModel.FK_AttachedProduct_Product1" />
         <AssociationConnector Association="BeautyModel.FK_Client_Gender" />
         <AssociationConnector Association="BeautyModel.FK_ClientService_Client" />
         <AssociationConnector Association="BeautyModel.FK_ClientService_Service" />
@@ -25,7 +29,6 @@
         <AssociationConnector Association="BeautyModel.FK_ProductPhoto_Product" />
         <AssociationConnector Association="BeautyModel.FK_ProductSale_Product" />
         <AssociationConnector Association="BeautyModel.FK_ServicePhoto_Service" />
-        <AssociationConnector Association="BeautyModel.AttachedProduct" />
         <AssociationConnector Association="BeautyModel.TagOfClient" />
       </Diagram>
     </edmx:Diagrams>

@@ -24,7 +24,7 @@ namespace BeautyShop.UI.Pages
     {
         #region Состояние и свойства страницы ProductView
 
-        private List<Product> ProdList { get { return Transition.Context.Product.ToList(); } }
+        private List<Product> ProdList { get => Transition.Context.Product.ToList(); }
 
         #endregion
 
@@ -59,7 +59,7 @@ namespace BeautyShop.UI.Pages
             if (SearchBox.Text != "Введите для поиска")
                 itemUpdate = itemUpdate
                     .Where(p => p.Title.ToLower().Contains(SearchBox.Text.ToLower())
-                    && p.Description.ToLower().Contains(SearchBox.Text.ToLower()))
+                    || p.Description.ToLower().Contains(SearchBox.Text.ToLower()))
                     .ToList();
 
             switch (SortCBox.SelectedIndex)
@@ -74,7 +74,15 @@ namespace BeautyShop.UI.Pages
                     }
             }
 
-            ViewProduct.ItemsSource = itemUpdate;
+            CountProduct.Text = $"Количество записей: {itemUpdate.Count} из {ProdList.Count}";
+
+            if (itemUpdate.Count > 0)
+            {
+                ViewProduct.Visibility = Visibility.Visible;
+                ViewProduct.ItemsSource = itemUpdate;
+            }
+            else
+                ViewProduct.Visibility = Visibility.Hidden;
         }
 
         private void SearchBox_TextChanged(object sender, TextChangedEventArgs e)
@@ -120,10 +128,17 @@ namespace BeautyShop.UI.Pages
 
         private void ViewProduct_MouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
-            var tempProd = ViewProduct.SelectedItem;
+            var tempCountItems = ViewProduct.SelectedItems.Count;
 
-            if (tempProd != null)
-                Transition.MainFrame.Navigate(new AddEditProduct(tempProd as Product));
+            if (tempCountItems != 0)
+            {
+                if (tempCountItems == 1)
+                    Transition.MainFrame.Navigate(new AddEditProduct(ViewProduct.SelectedItem as Product));
+                else
+                    MessageBox.Show("Необходимо выбрать конкретный продукт", "Редактирование продукта", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            else
+                MessageBox.Show("Выберите продукт для редактирования", "Редактирование продукта", MessageBoxButton.OK, MessageBoxImage.Error);
         }
 
         private void BtnAdd_Click(object sender, RoutedEventArgs e)
@@ -138,6 +153,18 @@ namespace BeautyShop.UI.Pages
         private void DeleteBtn_Click(object sender, RoutedEventArgs e)
         {
             var deleteDataProd = ViewProduct.SelectedItems.Cast<Product>().ToList();
+
+            foreach (var itemProdSale in Transition.Context.ProductSale.ToList())
+            {
+                foreach (var itemProd in deleteDataProd)
+                {
+                    if (itemProd.ID == itemProdSale.ProductID)
+                    {
+                        MessageBox.Show("Один из выбранных продуктов имеет информацию о его продажах", "Удаление данных", MessageBoxButton.OK, MessageBoxImage.Error);
+                        return;
+                    }
+                }
+            }
 
             if (MessageBox.Show($"Вы хотите удалить {deleteDataProd.Count} элементов?", 
                 "Удаление данных", MessageBoxButton.YesNo, MessageBoxImage.Question) == MessageBoxResult.Yes)
@@ -176,6 +203,15 @@ namespace BeautyShop.UI.Pages
                 Transition.Context.ChangeTracker.Entries().ToList().ForEach(p => p.Reload());
                 SortingProduct();
             }
+        }
+
+        #endregion
+
+        #region Переход на страницу SalesHistory
+
+        private void SalesHistoryBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Transition.MainFrame.Navigate(new SalesHistory());
         }
 
         #endregion

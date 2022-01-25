@@ -36,6 +36,7 @@
             <Setter Property="Foreground" Value="White"></Setter>
             <Setter Property="Background" Value="{StaticResource AttentionBackground}"></Setter>
         </Style>
+        
         <Style TargetType="TextBox">
             <Setter Property="HorizontalAlignment" Value="Center"></Setter>
             <Setter Property="VerticalAlignment" Value="Center"></Setter>
@@ -43,7 +44,9 @@
             <Setter Property="Height" Value="30"></Setter>
             <Setter Property="Margin" Value="10"></Setter>
             <Setter Property="Padding" Value="0,4"></Setter>
+            <Setter Property="FontSize" Value="14"></Setter>
         </Style>
+        
         <Style TargetType="ComboBox">
             <Setter Property="HorizontalAlignment" Value="Center"></Setter>
             <Setter Property="VerticalAlignment" Value="Center"></Setter>

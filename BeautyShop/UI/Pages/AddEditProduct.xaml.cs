@@ -24,8 +24,14 @@ namespace BeautyShop.UI.Pages
     /// </summary>
     public partial class AddEditProduct : Page
     {
+        #region Состояние и свойства страницы AddEditProduct
+
         private Product addProduct;
         public string Path { get { return System.IO.Path.GetFullPath(System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory + "../../UI")); } }
+
+        #endregion
+
+        #region Конструктор страницы AddEditProduct
 
         public AddEditProduct(Product tempProd)
         {
@@ -40,8 +46,15 @@ namespace BeautyShop.UI.Pages
             var allManufacturer = Transition.Context.Manufacturer.ToList();
             ManufacturerCBox.ItemsSource = allManufacturer;
 
-            DataContext = addProduct;
+            //DataContext = addProduct;
+
+            AttachedProdLV.ItemsSource = Transition.Context.AttachedProduct.ToList();
+            AttachedProdLV.DataContext = Transition.Context.AttachedProduct.ToList();
         }
+
+        #endregion
+
+        #region Сохранение новых данных, сформированные пользователем
 
         private void SaveBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -57,8 +70,8 @@ namespace BeautyShop.UI.Pages
                 error.AppendLine("Выберите производителя");
             if (string.IsNullOrWhiteSpace(addProduct.MainImagePath))
                 error.AppendLine("Загрузите фото");
-
-            addProduct.Description = "";
+            if (string.IsNullOrWhiteSpace(addProduct.Description))
+                addProduct.Description = "";
 
             if (error.Length > 0)
             {
@@ -80,6 +93,9 @@ namespace BeautyShop.UI.Pages
                 MessageBox.Show($"При сохранении продукта произошла ошибка:\n{er.Message}", "Сохранение продукта", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+        #endregion
+
+        #region Добавление фото
 
         private void DownloadImageBtn_Click(object sender, RoutedEventArgs e)
         {
@@ -96,5 +112,7 @@ namespace BeautyShop.UI.Pages
                 ImageProduct.Source = (ImageSource)new ImageSourceConverter().ConvertFromString(downloadImage.FileName);
             }
         }
+
+        #endregion
     }
 }

@@ -12,6 +12,7 @@
           </Key>
           <Property Name="MainProductID" Type="int" Nullable="false" />
           <Property Name="AttachedProductID" Type="int" Nullable="false" />
+          <Property Name="Nothing" Type="nvarchar" MaxLength="4" />
         </EntityType>
         <EntityType Name="Client">
           <Key>
@@ -110,6 +111,16 @@
           <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="ServiceID" Type="int" Nullable="false" />
           <Property Name="PhotoPath" Type="nvarchar" MaxLength="1000" Nullable="false" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
         </EntityType>
         <EntityType Name="Tag">
           <Key>
@@ -295,6 +306,7 @@
           <EntitySet Name="ProductSale" EntityType="Self.ProductSale" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Service" EntityType="Self.Service" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ServicePhoto" EntityType="Self.ServicePhoto" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Tag" EntityType="Self.Tag" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="TagOfClient" EntityType="Self.TagOfClient" Schema="dbo" store:Type="Tables" />
           <AssociationSet Name="FK_AttachedProduct_Product" Association="Self.FK_AttachedProduct_Product">
@@ -355,6 +367,7 @@
     <edmx:ConceptualModels>
       <Schema Namespace="BeautyModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="KosmeticDBEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AttachedProduct" EntityType="BeautyModel.AttachedProduct" />
           <EntitySet Name="Client" EntityType="BeautyModel.Client" />
           <EntitySet Name="ClientService" EntityType="BeautyModel.ClientService" />
           <EntitySet Name="DocumentByService" EntityType="BeautyModel.DocumentByService" />
@@ -365,7 +378,16 @@
           <EntitySet Name="ProductSale" EntityType="BeautyModel.ProductSale" />
           <EntitySet Name="Service" EntityType="BeautyModel.Service" />
           <EntitySet Name="ServicePhoto" EntityType="BeautyModel.ServicePhoto" />
+          <EntitySet Name="sysdiagrams" EntityType="BeautyModel.sysdiagrams" />
           <EntitySet Name="Tag" EntityType="BeautyModel.Tag" />
+          <AssociationSet Name="FK_AttachedProduct_Product" Association="BeautyModel.FK_AttachedProduct_Product">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="AttachedProduct" EntitySet="AttachedProduct" />
+          </AssociationSet>
+          <AssociationSet Name="FK_AttachedProduct_Product1" Association="BeautyModel.FK_AttachedProduct_Product1">
+            <End Role="Product" EntitySet="Product" />
+            <End Role="AttachedProduct" EntitySet="AttachedProduct" />
+          </AssociationSet>
           <AssociationSet Name="FK_Client_Gender" Association="BeautyModel.FK_Client_Gender">
             <End Role="Gender" EntitySet="Gender" />
             <End Role="Client" EntitySet="Client" />
@@ -402,15 +424,22 @@
             <End Role="Service" EntitySet="Service" />
             <End Role="ServicePhoto" EntitySet="ServicePhoto" />
           </AssociationSet>
-          <AssociationSet Name="AttachedProduct" Association="BeautyModel.AttachedProduct">
-            <End Role="Product" EntitySet="Product" />
-            <End Role="Product1" EntitySet="Product" />
-          </AssociationSet>
           <AssociationSet Name="TagOfClient" Association="BeautyModel.TagOfClient">
             <End Role="Client" EntitySet="Client" />
             <End Role="Tag" EntitySet="Tag" />
           </AssociationSet>
         </EntityContainer>
+        <EntityType Name="AttachedProduct">
+          <Key>
+            <PropertyRef Name="MainProductID" />
+            <PropertyRef Name="AttachedProductID" />
+          </Key>
+          <Property Name="MainProductID" Type="Int32" Nullable="false" />
+          <Property Name="AttachedProductID" Type="Int32" Nullable="false" />
+          <Property Name="Nothing" Type="String" MaxLength="4" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Product" Relationship="BeautyModel.FK_AttachedProduct_Product" FromRole="AttachedProduct" ToRole="Product" />
+          <NavigationProperty Name="Product1" Relationship="BeautyModel.FK_AttachedProduct_Product1" FromRole="AttachedProduct" ToRole="Product" />
+        </EntityType>
         <EntityType Name="Client">
           <Key>
             <PropertyRef Name="ID" />
@@ -480,11 +509,11 @@
           <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="MainImagePath" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
           <Property Name="ManufacturerID" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="AttachedProduct" Relationship="BeautyModel.FK_AttachedProduct_Product" FromRole="Product" ToRole="AttachedProduct" />
+          <NavigationProperty Name="AttachedProduct1" Relationship="BeautyModel.FK_AttachedProduct_Product1" FromRole="Product" ToRole="AttachedProduct" />
           <NavigationProperty Name="Manufacturer" Relationship="BeautyModel.FK_Product_Manufacturer" FromRole="Product" ToRole="Manufacturer" />
           <NavigationProperty Name="ProductPhoto" Relationship="BeautyModel.FK_ProductPhoto_Product" FromRole="Product" ToRole="ProductPhoto" />
           <NavigationProperty Name="ProductSale" Relationship="BeautyModel.FK_ProductSale_Product" FromRole="Product" ToRole="ProductSale" />
-          <NavigationProperty Name="Product1" Relationship="BeautyModel.AttachedProduct" FromRole="Product" ToRole="Product1" />
-          <NavigationProperty Name="Product2" Relationship="BeautyModel.AttachedProduct" FromRole="Product1" ToRole="Product" />
         </EntityType>
         <EntityType Name="ProductPhoto">
           <Key>
@@ -530,6 +559,16 @@
           <Property Name="PhotoPath" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Service" Relationship="BeautyModel.FK_ServicePhoto_Service" FromRole="ServicePhoto" ToRole="Service" />
         </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" Nullable="false" MaxLength="128" FixedLength="false" Unicode="true" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
         <EntityType Name="Tag">
           <Key>
             <PropertyRef Name="ID" />
@@ -539,6 +578,30 @@
           <Property Name="Color" Type="String" Nullable="false" MaxLength="6" FixedLength="true" Unicode="true" />
           <NavigationProperty Name="Client" Relationship="BeautyModel.TagOfClient" FromRole="Tag" ToRole="Client" />
         </EntityType>
+        <Association Name="FK_AttachedProduct_Product">
+          <End Type="BeautyModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="BeautyModel.AttachedProduct" Role="AttachedProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AttachedProduct">
+              <PropertyRef Name="MainProductID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_AttachedProduct_Product1">
+          <End Type="BeautyModel.Product" Role="Product" Multiplicity="1" />
+          <End Type="BeautyModel.AttachedProduct" Role="AttachedProduct" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Product">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="AttachedProduct">
+              <PropertyRef Name="AttachedProductID" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Client_Gender">
           <End Type="BeautyModel.Gender" Role="Gender" Multiplicity="1" />
           <End Type="BeautyModel.Client" Role="Client" Multiplicity="*" />
@@ -647,20 +710,25 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="AttachedProduct">
-          <End Type="BeautyModel.Product" Role="Product" Multiplicity="*" />
-          <End Type="BeautyModel.Product" Role="Product1" Multiplicity="*" />
-        </Association>
         <Association Name="TagOfClient">
           <End Type="BeautyModel.Client" Role="Client" Multiplicity="*" />
           <End Type="BeautyModel.Tag" Role="Tag" Multiplicity="*" />
         </Association>
-      </Schema>
+        </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="Хранилище BeautyModelContainer" CdmEntityContainer="KosmeticDBEntities">
+          <EntitySetMapping Name="AttachedProduct">
+            <EntityTypeMapping TypeName="BeautyModel.AttachedProduct">
+              <MappingFragment StoreEntitySet="AttachedProduct">
+                <ScalarProperty Name="Nothing" ColumnName="Nothing" />
+                <ScalarProperty Name="AttachedProductID" ColumnName="AttachedProductID" />
+                <ScalarProperty Name="MainProductID" ColumnName="MainProductID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Client">
             <EntityTypeMapping TypeName="BeautyModel.Client">
               <MappingFragment StoreEntitySet="Client">
@@ -769,6 +837,17 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="BeautyModel.sysdiagrams">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="definition" ColumnName="definition" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="name" ColumnName="name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="Tag">
             <EntityTypeMapping TypeName="BeautyModel.Tag">
               <MappingFragment StoreEntitySet="Tag">
@@ -778,14 +857,6 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <AssociationSetMapping Name="AttachedProduct" TypeName="BeautyModel.AttachedProduct" StoreEntitySet="AttachedProduct">
-            <EndProperty Name="Product1">
-              <ScalarProperty Name="ID" ColumnName="AttachedProductID" />
-            </EndProperty>
-            <EndProperty Name="Product">
-              <ScalarProperty Name="ID" ColumnName="MainProductID" />
-            </EndProperty>
-          </AssociationSetMapping>
           <AssociationSetMapping Name="TagOfClient" TypeName="BeautyModel.TagOfClient" StoreEntitySet="TagOfClient">
             <EndProperty Name="Tag">
               <ScalarProperty Name="ID" ColumnName="TagID" />
